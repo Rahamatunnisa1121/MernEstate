@@ -35,10 +35,54 @@ export const signin=async(req,res,next)=>{
         }
         const token=jwt.sign({id:validUser._id},process.env.JWT_SECRET);
         const {password:pass, ...rest}=validUser._doc;
-        res.cookie('accessToken',token,{httpOnly:true, expires:new Date(Date.now() + 24*60*60)}).status(200).json({rest});
+        res.cookie('accessToken',token,{httpOnly:true, expires:new Date(Date.now() + 24*60*60*1000)}).status(200).json({rest});
     }
     catch(error)
     {
         next(error);
+    }
+};
+
+export const google=async (req,res,next) => {
+    try
+    {
+        //If user exists, we need to sign in the user, otherwise create the user!
+        const existingUser=await User.findOne({email:req.body.email});
+        if(existingUser)//exists -> signin
+        {
+            const token=jwt.sign({id:existingUser._id},process.env.JWT_SECRET);
+            const{password:pass,...rest}=existingUser._doc;
+            res.cookie('accessToken',token,{
+                httpOnly:true,
+                expires:new Date(Date.now() + 24*60*60*1000)
+            })
+            .status(200)
+            .json(rest);
+        }
+        else //signup
+        {
+            const generatedPass=Math.random().toString(36).slice(-8)+Math.random().toString(36).slice(-8);
+            const hashedPassword=bcryptjs.hashSync(generatedPass,10);
+            const newUser=new User({
+                username:req.body.name.split(" ").join("").toLowerCase()+Math.random().toString(36).slice(-2),
+                email:req.body.email,
+                password:hashedPassword,
+                avatar:req.body.photo
+            });
+            await newUser.save();
+            const token=jwt.sign({id:newUser._id},process.env.JWT_SECRET);
+            const{password:pass,...rest}=newUser._doc;
+            res.cookie('accessToken',token,{
+                httpOnly:true,
+                expires:new Date(Date.now() + 24*60*60*1000)
+            })
+            .status(200)
+            .json(rest);
+        }
+    }
+    catch(error)
+    {
+        //console.log(error);
+        next(errorHandler(500,'Cannot continue with google!'));
     }
 };
