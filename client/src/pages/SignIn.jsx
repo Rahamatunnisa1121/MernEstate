@@ -30,8 +30,14 @@ export default function SignIn() {
         },
         body:JSON.stringify(formData),//to convert the json value to json formatted string
       });
-      const data=await res.json();
-      console.log(data);
+      let data;
+      try {
+        data = await res.json();
+      } catch (err) {
+        console.error("Error parsing JSON:", err);
+        return;
+      }
+      console.log(data); 
       if(data.success===false)
       {
         // setError(data.message);
