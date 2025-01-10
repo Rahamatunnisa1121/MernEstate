@@ -30,6 +30,7 @@ export default function SignIn() {
         },
         body:JSON.stringify(formData),//to convert the json value to json formatted string
       });
+      console.log(res);
       let data;
       try {
         data = await res.json();
