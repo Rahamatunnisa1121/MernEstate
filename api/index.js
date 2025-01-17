@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
 import updateRouter from './routes/update.route.js';
+import cookieParser from 'cookie-parser';//initilaizing
 import path from 'path';
 dotenv.config();
 mongoose.connect(process.env.MONGO).then(()=>{
@@ -14,6 +15,7 @@ mongoose.connect(process.env.MONGO).then(()=>{
 const app=express();
 app.use('/uploads', express.static(path.resolve('uploads')));
 app.use(express.json());
+app.use(cookieParser());
 app.listen(3000,()=>{
     console.log("Server running...");
 });
