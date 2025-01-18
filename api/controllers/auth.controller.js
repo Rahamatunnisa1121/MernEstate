@@ -86,3 +86,15 @@ export const google=async (req,res,next) => {
         next(errorHandler(500,'Cannot continue with google!'));
     }
 };
+
+export const signout=async(req,res,next)=>{
+    try
+    {
+        res.clearCookie('accessToken');
+        res.status(200).json('You are logged out!');
+    }
+    catch(err)
+    {
+        next(err);
+    }
+};
