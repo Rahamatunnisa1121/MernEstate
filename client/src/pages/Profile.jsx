@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRef,useState,useEffect} from 'react';
 import { useDispatch,useSelector } from 'react-redux';
-import {deleteUserFailure, deleteUserStart, deleteUserSuccess, updateAvatar,updateUserFailure,updateUserStart,updateUserSuccess} from '../redux/user/userSlice.js';
+import {deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutUserFailure, signoutUserStart, signoutUserSuccess, updateAvatar,updateUserFailure,updateUserStart,updateUserSuccess} from '../redux/user/userSlice.js';
 export default function Profile() {
   const dispatch=useDispatch();
   const fileRef=useRef(null);
@@ -100,6 +100,25 @@ export default function Profile() {
       dispatch(deleteUserFailure(err.message));
     }
   };
+  const handleSignOut=async()=>{
+    try
+    {
+      dispatch(signoutUserStart());
+      const res=await fetch('/api/auth/signout');
+      const data=await res.json();
+      if(data.success===false)
+      {
+        dispatch(signoutUserFailure(data.message));
+        return;
+      }
+      dispatch(signoutUserSuccess());
+    }
+    catch(err)
+    {
+      dispatch(signoutUserFailure(err.message));
+      //console.log(err);
+    }
+  };
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7 text-pink-700'>Profile</h1>
@@ -120,11 +139,11 @@ export default function Profile() {
         <input type="text" placeholder='Username' defaultValue={currentUser.username} id='username' onChange={handleChange} className='border p-3 rounded-lg border-pink-300'/>
         <input type="text" placeholder='Email' defaultValue={currentUser.email} onChange={handleChange} id='email' className='border p-3 rounded-lg border-pink-300'/>
         <input type="text" placeholder='Password' id='password'onChange={handleChange} className='border p-3 rounded-lg border-pink-300'/>
-        <button disabled={loading} className='bg-pink-200  text-pink-700 p-3 rounded-lg uppercase font-medium hover:opacity-95 disabled:opacity-80'>{loading?'Loading..':'Update'}</button>
+        <button disabled={loading} className='bg-pink-200  text-pink-700 p-3 rounded-lg uppercase font-medium hover:opacity-95 disabled:opacity-80'>{loading?'Updating..':'Update'}</button>
       </form>
       <div className='flex justify-between mt-5'>
         <span onClick={handleDeleteUser} className='text-pink-800 cursor-pointer'>Delete Account</span>
-        <span className='text-pink-800 cursor-pointer'>Sign out</span>
+        <span onClick={handleSignOut} className='text-pink-800 cursor-pointer'>Sign out</span>
       </div>
       {error && <p className='text-red-600 mt-5 font-bold'>{error}</p>}
     </div>
