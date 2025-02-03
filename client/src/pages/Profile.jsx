@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import { useRef,useState,useEffect} from 'react';
 import { useDispatch,useSelector } from 'react-redux';
 import {deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutUserFailure, signoutUserStart, signoutUserSuccess, updateAvatar,updateUserFailure,updateUserStart,updateUserSuccess} from '../redux/user/userSlice.js';
@@ -140,6 +141,7 @@ export default function Profile() {
         <input type="text" placeholder='Email' defaultValue={currentUser.email} onChange={handleChange} id='email' className='border p-3 rounded-lg border-pink-300'/>
         <input type="text" placeholder='Password' id='password'onChange={handleChange} className='border p-3 rounded-lg border-pink-300'/>
         <button disabled={loading} className='bg-pink-200  text-pink-700 p-3 rounded-lg uppercase font-medium hover:opacity-95 disabled:opacity-80'>{loading?'Updating..':'Update'}</button>
+        <Link to={"/create-listing"} className='bg-pink-300 text-pink-600 p-3 rounded-lg text-center uppercase font-medium hover:opacity-95 disabled:opacity-80'>Create Listing</Link>
       </form>
       <div className='flex justify-between mt-5'>
         <span onClick={handleDeleteUser} className='text-pink-800 cursor-pointer'>Delete Account</span>
