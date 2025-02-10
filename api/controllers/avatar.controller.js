@@ -1,6 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import User from '../models/user.model.js';
+//configuration
 const storage=multer.diskStorage({
     destination:(req,file,cb)=>{
         cb(null,'uploads/');
@@ -16,8 +17,8 @@ const upload=multer({
 }); //initilaizing multer with defined storage config
 
 export const avatar=[upload.single('avatar'),async(req,res)=>{
-    console.log('Request body:', req.body);
-    console.log('Uploaded file:', req.file);
+    // console.log('Request body:', req.body);
+    // console.log('Uploaded file:', req.file);
     try{
         if(!req.file)
         {

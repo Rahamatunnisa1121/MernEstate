@@ -15,6 +15,7 @@ mongoose.connect(process.env.MONGO).then(()=>{
 });
 const app=express();
 app.use('/uploads', express.static(path.resolve('uploads')));
+app.use('/listingImages', express.static(path.resolve('listingImages')));
 app.use(express.json());
 app.use(cookieParser());
 app.listen(3000,()=>{
