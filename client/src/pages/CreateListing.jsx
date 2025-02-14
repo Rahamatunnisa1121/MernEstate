@@ -121,6 +121,14 @@ export default function CreateListing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if(formData.length<1)
+      {
+        return setError('You must upload atleast one image.');
+      }
+      if(+formData.regularPrice < +formData.discountPrice)
+      {
+        return setError('Discount price must be less than regular price.');
+      }
       setLoading(true);
       setError(false);
         const res = await fetch('/api/listing/create', {
@@ -134,11 +142,12 @@ export default function CreateListing() {
         }),
       });
       const data = await res.json();
-      console.log(data);
+      //console.log(data);
       setLoading(false);
       if (data.success === false) {
         setError(data.message);
       }
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -190,13 +199,15 @@ export default function CreateListing() {
                       <span className='text-xs text-pink-600 font-semibold'>( ₹ / Month )</span>
                     </div>
                 </div>
-                <div className='flex items-center gap-2'>
+                {formData.offer && (
+                  <div className='flex items-center gap-2'>
                   <input type='number' onChange={handleChange} value={formData.discountPrice} id="discountPrice" min='0' max='10000000' className='p-3 border border-pink-300 rounded-lg' required />
                   <div className='flex flex-col items-center'>
                     <p className='text-pink-700 font-semibold'>Discounted Price</p>
                     <span className='text-xs text-pink-600 font-semibold'>( ₹ / Month )</span>
                   </div>
                 </div>
+                )} 
             </div>
             </div>
             <div className='flex flex-col flex-1 gap-4'>
