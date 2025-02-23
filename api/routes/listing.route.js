@@ -1,5 +1,5 @@
 import express from 'express';
-import { createListing } from '../controllers/listing.controller.js';
+import { createListing,deleteListing } from '../controllers/listing.controller.js';
 import { insertImage } from '../controllers/listing.controller.js';
 import { verifyToken } from '../utils/verifyUser.js'; 
 import multer from 'multer';
@@ -19,4 +19,5 @@ const upload=multer({
 const router=express.Router();
 router.post('/create',verifyToken,createListing);
 router.post('/insertImage',upload.single('image'),insertImage);
+router.delete('/delete/:id',verifyToken,deleteListing);
 export default router;
