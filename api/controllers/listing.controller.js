@@ -26,7 +26,7 @@ export const insertImage=async(req,res,next)=>{
         console.log(err);
         res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
 export const createListing=async(req,res,next)=>{
     try
@@ -39,6 +39,7 @@ export const createListing=async(req,res,next)=>{
         next(err);//middleware handles the error
     }
 };
+
 export const deleteListing=async(req,res,next)=>{
     const listing=await Listing.findById(req.params.id);
     if(!listing)
@@ -61,4 +62,29 @@ export const deleteListing=async(req,res,next)=>{
     {
         next(err);
     }
-}
+};
+
+export const updateListing=async(req,res,next)=>{
+    const listing=await Listing.findById(req.params.id);
+    if(!listing)
+    {
+        return next(errorHandler(404,'Listing not found!'));
+    }
+    if(req.user.id!==listing.userRef)
+    {
+        return next(errorHandler(401,'You can only update your listings!'));
+    }
+    try
+    {
+        const updatedListing=await Listing.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {new:true}
+        );
+        res.status(200).json(updatedListing);
+    }
+    catch(err)
+    {
+        next(err);
+    }
+};
