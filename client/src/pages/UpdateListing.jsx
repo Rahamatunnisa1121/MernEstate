@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useState} from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-export default function CreateListing() {
+import { useNavigate, useParams } from 'react-router-dom';
+export default function UpdateListing() {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const params=useParams();
   const [formData,setFormData]=useState({
     imageUrls:[],
     name:'',
@@ -25,6 +26,22 @@ export default function CreateListing() {
   const [uploading,setUploading]=useState(false);
   const [loading,setLoading]=useState(false);
   const [error, setError] = useState(false);
+  useEffect(()=>{
+    const fetchListing=async()=>{
+      const listingID=params.listingID;
+      //console.log(listingID);
+      const res=await fetch(`/api/listing/getListing/${listingID}`);
+      const data=await res.json();
+      if(data.success===false)
+      {
+        console.log(data.message);
+        return;
+      }
+      //console.log(data);
+      setFormData(data);
+    };
+    fetchListing();
+  },[]);
   const storeImage=async(file)=>{
     const formdata=new FormData();
     formdata.append('image',file);
@@ -131,8 +148,8 @@ export default function CreateListing() {
       }
       setLoading(true);
       setError(false);
-        const res = await fetch('/api/listing/create', {
-        method: 'POST',
+        const res = await fetch(`/api/listing/update/${params.listingID}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -155,7 +172,7 @@ export default function CreateListing() {
   };
   return (
     <main className='p-3 max-w-4xl mx-auto'>
-        <h1 className='text-3xl font-semibold text-pink-700 text-center my-7'>Create a Listing</h1>
+        <h1 className='text-3xl font-semibold text-pink-700 text-center my-7'>Update the Listing</h1>
         <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
             <div className='flex flex-col gap-4  flex-1'>
               <input type="text" onChange={handleChange} value={formData.name} placeholder="Name" className='border p-3 rounded-lg border-pink-300' id='name' maxLength='62' minLength='10' required/>
@@ -230,7 +247,7 @@ export default function CreateListing() {
                 ))
               }
               <button  disabled={loading || uploading} className='bg-pink-300 text-pink-600 p-3 rounded-lg text-center uppercase font-medium hover:opacity-95 disabled:opacity-80'>
-              {loading ? 'Creating...' : 'Create listing'}
+              {loading ? 'Updating...' : 'Update listing'}
               </button>
               {error && <p className='text-red-600 mt-5 font-bold'>{error}</p>}
             </div>  
