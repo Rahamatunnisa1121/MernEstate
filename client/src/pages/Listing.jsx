@@ -6,6 +6,7 @@ import SwiperCore from 'swiper';
 import {Navigation} from 'swiper/modules';
 import 'swiper/css/bundle';
 import {useSelector} from 'react-redux';
+import Contact from '../components/Contact';
 import {
   FaBath,
   FaBed,
@@ -133,12 +134,14 @@ export default function Listing() {
                 {listing.furnished ? 'Furnished' : 'Unfurnished'}
               </li>
             </ul>
-            {currentUser && listing.userRef !== currentUser._id && !contact && (
+            {currentUser && listing.userRef!==currentUser._id && !contact && (
               <button 
-                onClick={()=>setContact(true)}
-                className=''
-              ></button>
+              onClick={()=>setContact(true)}
+              className='bg-pink-200 mt-4 text-pink-700 p-3 rounded-lg uppercase font-medium hover:opacity-95 disabled:opacity-80'>
+                Contact Landlord
+              </button>
             )}
+            {contact && <Contact listing={listing}/>}
           </div>
         </div>
       )}
