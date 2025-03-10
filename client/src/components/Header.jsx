@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import {FaSearch} from 'react-icons/fa';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 export default function Header() {
     const {currentUser}=useSelector(state => state.user);
+    const [searchTerm,setSearchTerm]=useState('');
+    const navigate=useNavigate();
+    const handleSubmit=(e)=>{
+        e.preventDefault();
+        //window.location.search gets everything after the ? in the URL.
+        const urlParams= new URLSearchParams(window.location.search);
+        urlParams.set('searchTerm',searchTerm);
+        const searchQuery=urlParams.toString();
+        navigate(`/search?${searchQuery}`);
+    };
+    useEffect(()=>{
+        const urlParams=new URLSearchParams(window.location.search);
+        const searchTermFromURL=urlParams.get('searchTerm');
+        if(searchTermFromURL)
+        {
+            setSearchTerm(searchTermFromURL);
+        }
+    },[location.search]);
   return (
     <header className='bg-pink-200 shadow-md'>
         <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
@@ -13,9 +31,15 @@ export default function Header() {
                     <span className='text-pink-700'>Estate</span>
                 </h1>
             </Link>
-            <form className='bg-pink-100 p-3 rounded-lg flex items-center'>
-                <input type="text" placeholder="Search.." className='bg-transparent focus:outline-none w-24 sm:w-64'/>
-                <FaSearch className='text-pink-600' />
+            <form onSubmit={handleSubmit}
+                className='bg-pink-100 p-3 rounded-lg flex items-center'>
+                <input type="text" placeholder="Search.." 
+                className='bg-transparent focus:outline-none w-24 sm:w-64'
+                value={searchTerm}
+                onChange={(e)=>setSearchTerm(e.target.value)}/>
+                <button>
+                    <FaSearch className='text-pink-600' />
+                </button>
             </form>
             <ul className='flex gap-4'>
                 <Link to='/'>
